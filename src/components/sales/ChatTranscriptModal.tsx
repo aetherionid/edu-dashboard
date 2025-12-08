@@ -50,8 +50,8 @@ export function ChatTranscriptModal({
 					// Checking typical n8n response from my previous edit:
 					// "={{ $items().map(i => i.json.message) }}" -> array of objects
 
-					const formattedMessages = data.map((msg: any) => ({
-						role: msg.type === 'human' ? 'customer' : 'agent',
+					const formattedMessages: ChatMessage[] = data.map((msg: { type: string; content: string }) => ({
+						role: (msg.type === 'human' ? 'customer' : 'agent') as 'customer' | 'agent',
 						message: msg.content,
 						time: new Date().toISOString() // API doesn't seem to return time in the map yet, or we need to fetch it.
 						// defined in seed: created_at is in table, but n8n only selects 'message' column jsonb.

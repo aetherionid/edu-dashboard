@@ -9,15 +9,7 @@ import { api, Student } from '@/lib/api';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-type ClassStat = {
-	id: number; // changed from class_id to id because n8n returns c.id alias
-	class_id?: number; // fallback
-	class_name: string;
-	total_students: number;
-	graded_today: number;
-	pending: number;
-	name?: string; // fallback if mapped
-};
+
 
 export default function TeacherPage() {
 	const [selectedClassId, setSelectedClassId] = useState<string>('');
@@ -53,12 +45,12 @@ export default function TeacherPage() {
 				// But wait, the Update status response aliases might differ.
 				// Let's assume the keys match the SQL columns/aliases.
 
-				const validClasses = (Array.isArray(statsData) ? statsData : []).map((c: any) => ({
-					id: c.class_id || c.id,
+				const validClasses = (Array.isArray(statsData) ? statsData : []).map((c: { class_id?: number; id?: number; class_name: string }) => ({
+					id: c.class_id || c.id || 0,
 					name: c.class_name
 				}));
 
-				setClasses(validClasses as any);
+				setClasses(validClasses);
 
 				if (validClasses.length > 0 && !selectedClassId) {
 					setSelectedClassId(validClasses[0].id.toString());
@@ -76,6 +68,18 @@ export default function TeacherPage() {
 		fetchData();
 	}, [selectedClassId]);
 
+	const updateStats = useCallback((studentList: Student[]) => {
+		const gradedCount = studentList.filter(s => s.graded_today).length;
+		const currentClass = classes.find(c => c.id.toString() === selectedClassId);
+
+		setStats({
+			class_name: currentClass?.name || 'Loading...',
+			total_students: studentList.length,
+			graded_today: gradedCount,
+			pending: studentList.length - gradedCount
+		});
+	}, [selectedClassId, classes]);
+
 	// Filter students and update stats when class changes
 	useEffect(() => {
 		if (!selectedClassId) return;
@@ -90,21 +94,9 @@ export default function TeacherPage() {
 		// I need to update Student type in api.ts too OR cast it here.
 		// The API response definitely has class_id based on SQL.
 
-		setStudents(classStudents as any);
-		updateStats(classStudents as any);
-	}, [selectedClassId, allStudents]);
-
-	const updateStats = useCallback((studentList: any[]) => {
-		const gradedCount = studentList.filter(s => s.graded_today).length;
-		const currentClass = classes.find(c => c.id.toString() === selectedClassId);
-
-		setStats({
-			class_name: currentClass?.name || 'Loading...',
-			total_students: studentList.length,
-			graded_today: gradedCount,
-			pending: studentList.length - gradedCount
-		});
-	}, [selectedClassId, classes]);
+		setStudents(classStudents);
+		updateStats(classStudents);
+	}, [selectedClassId, allStudents, updateStats]);
 
 	const handleGradingSuccess = useCallback((studentId: number) => {
 		// Optimistic update

@@ -28,7 +28,7 @@ export const api = {
 			}
 		},
 
-		getLeads: async (status?: string) => {
+		getLeads: async () => {
 			// Status filtering is currently handled in the SQL query for 'hot,warm,escalated'
 			const res = await fetch(`${API_BASE}/leads`);
 			if (!res.ok) throw new Error('Failed to fetch leads');

@@ -30,7 +30,7 @@ export function ClassOverview({ gradedCount, pendingCount }: ClassOverviewProps)
 			{/* Progress */}
 			<Card>
 				<CardHeader className="pb-3">
-					<CardTitle className="text-sm font-medium">Today's Progress</CardTitle>
+					<CardTitle className="text-sm font-medium">Today&apos;s Progress</CardTitle>
 				</CardHeader>
 				<CardContent className="space-y-3">
 					<div className="flex justify-between text-sm">

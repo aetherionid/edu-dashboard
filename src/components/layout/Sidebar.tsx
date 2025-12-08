@@ -13,18 +13,13 @@ import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 export function Sidebar() {
 	const pathname = usePathname();
 	const router = useRouter();
 	const { theme, setTheme } = useTheme();
-	const [mounted, setMounted] = useState(false);
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
+	const mounted = true;
 
 	const navItems = [
 		{ href: '/sales', label: 'Sales', icon: BarChart3 },

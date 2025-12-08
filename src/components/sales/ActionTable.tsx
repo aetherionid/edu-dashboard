@@ -106,7 +106,7 @@ export function ActionTable({ leads }: ActionTableProps) {
 											{lead.phone_number} • {formatDistanceToNow(new Date(lead.last_contacted), { addSuffix: true })}
 										</p>
 										<p className="text-xs text-muted-foreground/80 line-clamp-1 italic">
-											"{lead.ai_summary}"
+											&ldquo;{lead.ai_summary}&rdquo;
 										</p>
 									</div>
 

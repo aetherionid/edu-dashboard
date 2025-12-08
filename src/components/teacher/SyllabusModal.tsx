@@ -49,7 +49,7 @@ export function SyllabusModal({ open, onOpenChange }: SyllabusModalProps) {
 		try {
 			const data = await api.teacher.getSyllabus();
 			// Map API response (snake_case) to component type (camelCase)
-			const formatted: SyllabusObjective[] = (Array.isArray(data) ? data : []).map((item: any) => ({
+			const formatted: SyllabusObjective[] = (Array.isArray(data) ? data : []).map((item: { id: number; week: number; topic: string; learning_objectives?: string[]; completed: boolean; feedback_templates?: { score: number; label: string; template: string }[] }) => ({
 				id: item.id,
 				week: item.week,
 				topic: item.topic,
@@ -185,7 +185,7 @@ export function SyllabusModal({ open, onOpenChange }: SyllabusModalProps) {
 													<div className="flex items-start gap-2">
 														<MessageSquare className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
 														<p className="text-sm text-muted-foreground italic">
-															"{template.template}"
+															&ldquo;{template.template}&rdquo;
 														</p>
 													</div>
 												</div>

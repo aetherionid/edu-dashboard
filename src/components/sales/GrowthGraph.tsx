@@ -2,7 +2,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowUpRight, TrendingUp } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 // Static trend data - TODO: Create API endpoint for historical lead trends
@@ -14,11 +13,7 @@ const trendData = [
 ];
 
 export function GrowthGraph() {
-	const [mounted, setMounted] = useState(false);
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
+	const mounted = true;
 	const data = trendData;
 
 	return (

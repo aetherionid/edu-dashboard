@@ -10,7 +10,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Bell, Moon, Search, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 interface DashboardHeaderProps {
@@ -27,11 +26,7 @@ const notifications = [
 
 export function DashboardHeader({ title, description, action }: DashboardHeaderProps) {
 	const { theme, setTheme } = useTheme();
-	const [mounted, setMounted] = useState(false);
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
+	const mounted = true;
 
 	const unreadCount = notifications.filter(n => n.unread).length;
 

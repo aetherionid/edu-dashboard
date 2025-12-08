@@ -92,7 +92,7 @@ export function StatsRow({ stats }: StatsRowProps) {
 						</div>
 					</div>
 					<div>
-						<p className="text-sm font-medium">Today's Progress</p>
+						<p className="text-sm font-medium">Today&apos;s Progress</p>
 						<p className="text-xs text-muted-foreground">
 							{stats.graded_today} of {stats.total_students} graded
 						</p>
