@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/aetherionid/edu-dashboard/compare/v1.1.0...v1.2.0) (2025-12-08)
+
+
+### Features
+
+* Enhance grading wizard with dynamic topic selection, improved score input, and AI draft message personalization, alongside adding various project documentation files. ([abcb2b6](https://github.com/aetherionid/edu-dashboard/commit/abcb2b6de4a50fd67d1d4c6c5d6de67b2905ca52))
+
 ## [1.1.0](https://github.com/aetherionid/edu-dashboard/compare/v1.0.0...v1.1.0) (2025-12-08)
 
 
