@@ -78,7 +78,7 @@ export function Sidebar() {
 							JD
 						</div>
 						<div className="flex-1 min-w-0">
-							<p className="text-sm font-medium text-white truncate">John Doe</p>
+							<p className="text-sm font-medium text-white truncate">Daniel Bowler</p>
 							<p className="text-xs text-slate-500">Admin</p>
 						</div>
 						<ChevronUp className="h-4 w-4 text-slate-500" />
