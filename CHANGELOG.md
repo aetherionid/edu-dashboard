@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/aetherionid/edu-dashboard/compare/v1.0.0...v1.1.0) (2025-12-08)
+
+
+### Features
+
+* set dark theme as default and update user name ([09de7c9](https://github.com/aetherionid/edu-dashboard/commit/09de7c98a79c6078ac0f4edd667a9e8fcd4930c0))
+
 ## 1.0.0 (2025-12-08)
 
 
