@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.0](https://github.com/aetherionid/edu-dashboard/compare/v1.2.0...v1.3.0) (2025-12-08)
+
+
+### Features
+
+* add search feature ([2bd42a1](https://github.com/aetherionid/edu-dashboard/commit/2bd42a141241fe7aa8384de7f0359fc7d23ff0ea))
+* implement authentication and profile pages, enhance graph styling ([25e84b8](https://github.com/aetherionid/edu-dashboard/commit/25e84b85efa90dde353bbff9b93c3b869913cacd))
+* implement class settings with toggle switches and CSV download, add active states to buttons ([367125a](https://github.com/aetherionid/edu-dashboard/commit/367125a3ebb1e5747fc92819b34738e644a1304a))
+
 ## [1.2.0](https://github.com/aetherionid/edu-dashboard/compare/v1.1.0...v1.2.0) (2025-12-08)
 
 
