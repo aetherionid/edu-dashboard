@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 export default function LoginPage() {
 	const { login } = useAuth();

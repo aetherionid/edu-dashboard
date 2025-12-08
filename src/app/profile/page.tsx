@@ -34,7 +34,7 @@ export default function ProfilePage() {
 
 	return (
 		<div className="p-6 space-y-6">
-			<DashboardHeader title="Profile" subtitle="Manage your account settings" />
+			<DashboardHeader title="Profile" description="Manage your account settings" />
 
 			<div className="max-w-2xl space-y-6">
 				{/* Profile Card */}
