@@ -1,7 +1,7 @@
 'use client';
 
+import { Card } from '@/components/ui/card';
 import { AlertCircle, ArrowUpRight, CheckCircle, Flame, TrendingUp } from 'lucide-react';
-import { toast } from 'sonner';
 
 interface MetricsGridProps {
 	metrics: {
@@ -19,84 +19,76 @@ export function MetricsGrid({ metrics }: MetricsGridProps) {
 			value: metrics.total_leads,
 			icon: TrendingUp,
 			change: '+12%',
-			trend: 'up',
-			gradient: 'from-blue-600 via-blue-500 to-cyan-400',
-			shadowColor: 'shadow-blue-500/25',
+			trend: 'up' as const,
+			color: 'text-blue-600 dark:text-blue-400',
+			bgColor: 'bg-blue-50 dark:bg-blue-950/50',
+			borderColor: 'border-blue-200 dark:border-blue-800',
 		},
 		{
 			title: 'Action Required',
 			value: metrics.action_required,
 			icon: AlertCircle,
 			change: '5 urgent',
-			trend: 'warning',
-			gradient: 'from-orange-600 via-orange-500 to-amber-400',
-			shadowColor: 'shadow-orange-500/25',
+			trend: 'warning' as const,
+			color: 'text-orange-600 dark:text-orange-400',
+			bgColor: 'bg-orange-50 dark:bg-orange-950/50',
+			borderColor: 'border-orange-200 dark:border-orange-800',
 		},
 		{
 			title: 'Hot Pipeline',
 			value: metrics.hot_pipeline,
 			icon: Flame,
 			change: '+8%',
-			trend: 'up',
-			gradient: 'from-emerald-600 via-emerald-500 to-teal-400',
-			shadowColor: 'shadow-emerald-500/25',
+			trend: 'up' as const,
+			color: 'text-emerald-600 dark:text-emerald-400',
+			bgColor: 'bg-emerald-50 dark:bg-emerald-950/50',
+			borderColor: 'border-emerald-200 dark:border-emerald-800',
 		},
 		{
 			title: 'Valid Rate',
 			value: metrics.valid_invalid_ratio,
 			icon: CheckCircle,
 			change: 'On target',
-			trend: 'stable',
-			gradient: 'from-sky-600 via-blue-500 to-indigo-400',
-			shadowColor: 'shadow-sky-500/25',
+			trend: 'stable' as const,
+			color: 'text-sky-600 dark:text-sky-400',
+			bgColor: 'bg-sky-50 dark:bg-sky-950/50',
+			borderColor: 'border-sky-200 dark:border-sky-800',
 		}
 	];
-
-	const handleClick = (card: typeof cards[0]) => {
-		toast.info(`Opening ${card.title}`);
-	};
 
 	return (
 		<div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
 			{cards.map((card, idx) => (
-				<div
+				<Card
 					key={idx}
-					onClick={() => handleClick(card)}
-					className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${card.gradient} p-5 cursor-pointer group transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${card.shadowColor}`}
+					className={`p-5 border-2 ${card.borderColor} ${card.bgColor} hover:shadow-md transition-shadow cursor-pointer`}
 				>
-					{/* Glow effect */}
-					<div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-
-					{/* Decorative circles */}
-					<div className="absolute -right-4 -top-4 w-24 h-24 rounded-full bg-white/10 blur-2xl pointer-events-none" />
-					<div className="absolute -right-8 -bottom-8 w-32 h-32 rounded-full bg-black/10 pointer-events-none" />
-
-					<div className="relative z-10">
-						<div className="flex items-center justify-between mb-4">
-							<card.icon className="h-6 w-6 text-white/90" />
-							{card.trend === 'up' && (
-								<span className="flex items-center gap-1 text-xs font-semibold text-white bg-white/20 px-2 py-1 rounded-full backdrop-blur-sm">
-									<ArrowUpRight className="h-3 w-3" />
-									{card.change}
-								</span>
-							)}
-							{card.trend === 'warning' && (
-								<span className="text-xs font-semibold text-white bg-white/20 px-2 py-1 rounded-full backdrop-blur-sm">
-									{card.change}
-								</span>
-							)}
-							{card.trend === 'stable' && (
-								<span className="text-xs font-semibold text-white/80">
-									{card.change}
-								</span>
-							)}
+					<div className="flex items-start justify-between mb-3">
+						<div className={`p-2 rounded-lg ${card.color} bg-background`}>
+							<card.icon className="h-5 w-5" />
 						</div>
-						<p className="text-4xl font-black text-white tracking-tight">
-							{typeof card.value === 'number' ? card.value.toLocaleString() : card.value}
-						</p>
-						<p className="text-sm text-white/80 mt-1 font-medium">{card.title}</p>
+						{card.trend === 'up' && (
+							<span className="flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+								<ArrowUpRight className="h-3 w-3" />
+								{card.change}
+							</span>
+						)}
+						{card.trend === 'warning' && (
+							<span className="text-xs font-medium text-orange-600 dark:text-orange-400">
+								{card.change}
+							</span>
+						)}
+						{card.trend === 'stable' && (
+							<span className="text-xs font-medium text-muted-foreground">
+								{card.change}
+							</span>
+						)}
 					</div>
-				</div>
+					<p className="text-3xl font-bold tracking-tight mb-1">
+						{typeof card.value === 'number' ? card.value.toLocaleString() : card.value}
+					</p>
+					<p className="text-sm text-muted-foreground font-medium">{card.title}</p>
+				</Card>
 			))}
 		</div>
 	);

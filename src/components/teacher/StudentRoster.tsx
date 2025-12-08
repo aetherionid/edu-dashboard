@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Student } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
-import { CheckCircle2, ChevronLeft, ChevronRight, Sparkles, Users } from 'lucide-react';
+import { CheckCircle2, ChevronLeft, ChevronRight, Users } from 'lucide-react';
 import { useState } from 'react';
 import { GradingWizard } from './GradingWizard';
 
@@ -107,7 +107,7 @@ export function StudentRoster({ students, onGradingSuccess }: StudentRosterProps
 									"flex items-center justify-between p-5 rounded-2xl border transition-all duration-200",
 									student.graded_today
 										? "bg-muted/30 border-transparent opacity-75"
-										: "bg-card hover:border-emerald-200 hover:shadow-md hover:scale-[1.01]"
+										: "bg-card hover:border-emerald-200 hover:shadow-md"
 								)}
 							>
 								<div className="flex items-center gap-5">
@@ -149,7 +149,7 @@ export function StudentRoster({ students, onGradingSuccess }: StudentRosterProps
 								</div>
 
 								{student.graded_today ? (
-									<div className="flex items-center gap-2 text-emerald-600 px-4 py-2 bg-emerald-50 rounded-lg">
+									<div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 px-4 py-2 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg">
 										<CheckCircle2 className="h-4 w-4" />
 										<span className="text-sm font-medium">Completed</span>
 									</div>
@@ -157,10 +157,10 @@ export function StudentRoster({ students, onGradingSuccess }: StudentRosterProps
 									<Button
 										size="lg"
 										onClick={() => handleGradeClick(student)}
-										className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white shadow-lg shadow-emerald-500/25 gap-2 transition-all duration-200 hover:scale-105 hover:shadow-xl px-6"
+										className="gap-2 px-6"
 									>
-										<Sparkles className="h-5 w-5" />
-										Grade with AI
+										<Users className="h-5 w-5" />
+										Grade Student
 									</Button>
 								)}
 							</div>

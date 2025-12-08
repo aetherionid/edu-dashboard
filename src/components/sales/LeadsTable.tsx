@@ -255,7 +255,8 @@ export function LeadsTable({ leads, onStatusChange }: LeadsTableProps) {
 												<Button
 													size="sm"
 													onClick={(e) => handleMessageClick(e, lead)}
-													className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white shadow-md gap-2 transition-all duration-200 hover:scale-105"
+													variant="default"
+													className="gap-2"
 												>
 													<MessageSquare className="h-4 w-4" />
 													Message

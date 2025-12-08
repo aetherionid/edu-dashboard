@@ -53,7 +53,7 @@ export function ClassOverview({ gradedCount, pendingCount }: ClassOverviewProps)
 					{todayAgenda.map((item, idx) => (
 						<div
 							key={idx}
-							className={`flex items-center gap-3 p-2 rounded-lg text-sm cursor-pointer transition-all duration-200 hover:bg-accent hover:scale-[1.02] ${item.active ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 ring-1 ring-emerald-500/20' : ''}`}
+							className={`flex items-center gap-3 p-2 rounded-lg text-sm cursor-pointer transition-colors hover:bg-accent ${item.active ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 ring-1 ring-emerald-500/20' : ''}`}
 						>
 							<span className="font-mono text-xs w-10 text-muted-foreground">{item.time}</span>
 							<div className="flex-1 min-w-0">
@@ -71,15 +71,15 @@ export function ClassOverview({ gradedCount, pendingCount }: ClassOverviewProps)
 					<CardTitle className="text-sm font-medium">Quick Actions</CardTitle>
 				</CardHeader>
 				<CardContent className="space-y-2">
-					<Button variant="outline" size="sm" className="w-full justify-start transition-all duration-200 hover:scale-[1.02] hover:bg-emerald-500/10 hover:border-emerald-500/30" onClick={() => handleAction('Download Reports')}>
+					<Button variant="outline" size="sm" className="w-full justify-start" onClick={() => handleAction('Download Reports')}>
 						<Download className="h-4 w-4 mr-2" />
 						Download Reports
 					</Button>
-					<Button variant="outline" size="sm" className="w-full justify-start transition-all duration-200 hover:scale-[1.02] hover:bg-emerald-500/10 hover:border-emerald-500/30" onClick={() => handleAction('View Syllabus')}>
+					<Button variant="outline" size="sm" className="w-full justify-start" onClick={() => handleAction('View Syllabus')}>
 						<BookOpen className="h-4 w-4 mr-2" />
 						View Syllabus
 					</Button>
-					<Button variant="outline" size="sm" className="w-full justify-start transition-all duration-200 hover:scale-[1.02] hover:bg-emerald-500/10 hover:border-emerald-500/30" onClick={() => handleAction('Settings')}>
+					<Button variant="outline" size="sm" className="w-full justify-start" onClick={() => handleAction('Settings')}>
 						<Settings className="h-4 w-4 mr-2" />
 						Settings
 					</Button>

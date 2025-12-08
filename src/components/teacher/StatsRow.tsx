@@ -45,7 +45,7 @@ export function StatsRow({ stats }: StatsRowProps) {
 			{statCards.map((stat, idx) => (
 				<Card
 					key={idx}
-					className="p-5 border bg-card/50 backdrop-blur-sm hover:bg-card/80 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg"
+					className="p-5 border bg-card/50 backdrop-blur-sm hover:bg-card/80 transition-colors hover:shadow-lg"
 				>
 					<div className="flex items-center gap-4">
 						<div className={`p-3 rounded-xl ${stat.bgColor}`}>

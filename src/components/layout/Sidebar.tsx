@@ -33,16 +33,21 @@ export function Sidebar() {
 
 	if (pathname === '/login') return null;
 
+	// Generate initials from name
+	const getInitials = (name: string) => {
+		return name.split(' ').map(n => n[0]).join('').toUpperCase();
+	};
+
 	return (
-		<div className="w-60 border-r bg-gradient-to-b from-slate-900 to-slate-950 h-screen p-4 flex flex-col sticky top-0 z-50 relative">
+		<div className="w-60 border-r bg-background h-screen p-4 flex flex-col sticky top-0 z-50">
 			{/* Logo */}
 			<div className="mb-8 flex items-center gap-3 px-2">
-				<div className="bg-slate-800 p-1.5 rounded-xl shadow-lg border border-slate-700">
+				<div className="bg-muted p-1.5 rounded-lg border">
 					<Image src="/logo.png" alt="Aetherion" width={32} height={32} className="h-8 w-8" />
 				</div>
 				<div>
-					<span className="font-bold text-white text-lg">Aetherion</span>
-					<p className="text-[10px] text-slate-500 uppercase tracking-wider">Dashboard</p>
+					<span className="font-bold text-foreground text-lg">Aetherion</span>
+					<p className="text-[10px] text-muted-foreground uppercase tracking-wider">Dashboard</p>
 				</div>
 			</div>
 
@@ -57,14 +62,14 @@ export function Sidebar() {
 							key={item.href}
 							href={item.href}
 							className={cn(
-								'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200',
+								'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
 								isActive
-									? 'bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-lg shadow-emerald-500/20'
-									: 'text-slate-400 hover:text-white hover:bg-white/5 hover:scale-[1.02] hover:translate-x-0.5'
+									? 'bg-primary text-primary-foreground'
+									: 'text-muted-foreground hover:text-foreground hover:bg-accent'
 							)}
 						>
 							<Icon className="h-4 w-4" />
-							<span className="font-medium">{item.label}</span>
+							<span>{item.label}</span>
 						</Link>
 					);
 				})}
@@ -73,15 +78,15 @@ export function Sidebar() {
 			{/* Profile */}
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
-					<button className="w-full flex items-center gap-3 px-2 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors text-left border border-white/10 cursor-pointer">
-						<div className="h-9 w-9 rounded-full bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center text-xs font-bold text-white shadow">
-							JD
+					<button className="w-full flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-accent transition-colors text-left border cursor-pointer">
+						<div className="h-9 w-9 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-primary-foreground">
+							{getInitials('Daniel Bowler')}
 						</div>
 						<div className="flex-1 min-w-0">
-							<p className="text-sm font-medium text-white truncate">Daniel Bowler</p>
-							<p className="text-xs text-slate-500">Admin</p>
+							<p className="text-sm font-medium truncate">Daniel Bowler</p>
+							<p className="text-xs text-muted-foreground">Admin</p>
 						</div>
-						<ChevronUp className="h-4 w-4 text-slate-500" />
+						<ChevronUp className="h-4 w-4 text-muted-foreground" />
 					</button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end" side="top" className="w-48 mb-2">

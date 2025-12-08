@@ -18,7 +18,7 @@ export function ScheduleStrip() {
 						key={idx}
 						className={cn(
 							"flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 shrink-0",
-							"hover:scale-105 cursor-pointer",
+							"cursor-pointer",
 							item.active
 								? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/25"
 								: "bg-muted hover:bg-muted/80 text-muted-foreground"
@@ -27,7 +27,7 @@ export function ScheduleStrip() {
 						<span className="font-mono text-xs opacity-70">{item.time}</span>
 						<span>{item.title}</span>
 						{item.active && (
-							<span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+							<span className="w-2 h-2 rounded-full bg-white" />
 						)}
 					</button>
 				))}

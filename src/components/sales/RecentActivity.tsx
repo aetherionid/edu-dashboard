@@ -56,7 +56,7 @@ export function RecentActivity() {
 					<button
 						key={activity.id}
 						onClick={() => handleClick(activity)}
-						className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-accent/50 transition-all duration-200 text-left group hover:scale-[1.01] hover:shadow-sm cursor-pointer"
+						className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-accent/50 transition-colors text-left group cursor-pointer"
 					>
 						<activity.icon className="h-4 w-4 text-muted-foreground shrink-0" />
 						<div className="flex-1 min-w-0">

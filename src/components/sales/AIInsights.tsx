@@ -1,13 +1,13 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Brain, ChevronRight, Clock, Lightbulb, Sparkles, Target, TrendingUp } from 'lucide-react';
+import { AlertCircle, ChevronRight, Clock, Target, TrendingUp } from 'lucide-react';
 import { toast } from 'sonner';
 
 const insights = [
 	{
 		id: 1,
-		icon: Lightbulb,
+		icon: AlertCircle,
 		iconColor: 'text-amber-500',
 		bgColor: 'bg-amber-50 dark:bg-amber-900/20',
 		title: 'Follow up with Mrs. Indah',
@@ -58,11 +58,10 @@ export function AIInsights() {
 		<Card className="h-full">
 			<CardHeader className="pb-3 border-b">
 				<div className="flex items-center gap-2">
-					<div className="p-1.5 rounded-md bg-cyan-100 dark:bg-cyan-900/30">
-						<Brain className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+					<div className="p-1.5 rounded-md bg-primary/10">
+						<TrendingUp className="h-4 w-4 text-primary" />
 					</div>
-					<CardTitle className="text-base font-semibold">AI Insights</CardTitle>
-					<Sparkles className="h-3 w-3 text-cyan-400 animate-pulse" />
+					<CardTitle className="text-base font-semibold">Recommended Actions</CardTitle>
 				</div>
 			</CardHeader>
 			<CardContent className="p-0">
@@ -71,7 +70,7 @@ export function AIInsights() {
 						<button
 							key={insight.id}
 							onClick={() => handleAction(insight)}
-							className="w-full flex items-center gap-3 p-3 hover:bg-accent/50 transition-all duration-200 text-left group hover:scale-[1.01] hover:shadow-sm rounded-lg cursor-pointer"
+							className="w-full flex items-center gap-3 p-3 hover:bg-accent/50 transition-colors text-left group cursor-pointer"
 						>
 							<div className={`p-2 rounded-lg ${insight.bgColor} shrink-0`}>
 								<insight.icon className={`h-4 w-4 ${insight.iconColor}`} />
@@ -80,7 +79,7 @@ export function AIInsights() {
 								<p className="text-sm font-medium truncate">{insight.title}</p>
 								<p className="text-xs text-muted-foreground truncate">{insight.description}</p>
 							</div>
-							<ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all shrink-0" />
+							<ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
 						</button>
 					))}
 				</div>
