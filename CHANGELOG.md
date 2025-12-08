@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/aetherionid/edu-dashboard/compare/v1.3.0...v1.3.1) (2025-12-08)
+
+
+### Bug Fixes
+
+* build errors for ci/cd ([840d777](https://github.com/aetherionid/edu-dashboard/commit/840d777b903d6a9ebd661b8d220fdfc48f737d28))
+
 ## [1.3.0](https://github.com/aetherionid/edu-dashboard/compare/v1.2.0...v1.3.0) (2025-12-08)
 
 
