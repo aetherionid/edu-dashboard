@@ -1,31 +1,55 @@
 "use client"
 
-import * as React from "react"
-import * as SwitchPrimitive from "@radix-ui/react-switch"
+import { cn } from "@/lib/utils";
 
-import { cn } from "@/lib/utils"
+interface SwitchProps {
+  checked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
+  disabled?: boolean;
+  className?: string;
+}
 
-function Switch({
-  className,
-  ...props
-}: React.ComponentProps<typeof SwitchPrimitive.Root>) {
+function Switch({ checked = false, onCheckedChange, disabled = false, className }: SwitchProps) {
+  const handleClick = () => {
+    if (!disabled && onCheckedChange) {
+      onCheckedChange(!checked);
+    }
+  };
+
   return (
-    <SwitchPrimitive.Root
-      data-slot="switch"
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      disabled={disabled}
+      onClick={handleClick}
       className={cn(
-        "peer data-[state=checked]:bg-primary data-[state=unchecked]:bg-input focus-visible:border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+        // Base styles
+        "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 transition-all duration-300 ease-in-out",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+        "disabled:cursor-not-allowed disabled:opacity-50",
+        "hover:opacity-90",
+        // Color based on state - VERY DIFFERENT COLORS
+        checked
+          ? "bg-emerald-500 border-emerald-500" // Green when ON
+          : "bg-slate-300 dark:bg-slate-600 border-slate-300 dark:border-slate-600", // Gray when OFF
         className
       )}
-      {...props}
     >
-      <SwitchPrimitive.Thumb
-        data-slot="switch-thumb"
+      <span
+        aria-hidden="true"
         className={cn(
-          "bg-background dark:data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-4 rounded-full ring-0 transition-transform data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0"
+          // Thumb base styles
+          "pointer-events-none inline-block h-5 w-5 transform rounded-full shadow-lg ring-0 transition-all duration-300 ease-in-out",
+          // Thumb color and position
+          checked
+            ? "translate-x-5 bg-white" // Move right when ON, white thumb
+            : "translate-x-0 bg-white" // Stay left when OFF, white thumb
         )}
       />
-    </SwitchPrimitive.Root>
+    </button>
   )
 }
 
-export { Switch }
+export { Switch };
+

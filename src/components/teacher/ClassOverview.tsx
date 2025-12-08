@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { BookOpen, Calendar, Download, Settings } from 'lucide-react';
-import { toast } from 'sonner';
 
 const todayAgenda = [
 	{ time: '09:00', title: 'Primary A - English', students: 12, active: true },
@@ -21,8 +20,8 @@ export function ClassOverview({ gradedCount, pendingCount }: ClassOverviewProps)
 	const totalStudents = gradedCount + pendingCount;
 	const progress = totalStudents > 0 ? (gradedCount / totalStudents) * 100 : 0;
 
-	const handleAction = (action: string) => {
-		toast.info(action, { description: 'Feature coming soon' });
+	const handleAction = () => {
+		// Actions will be implemented in future iterations
 	};
 
 	return (
@@ -71,15 +70,15 @@ export function ClassOverview({ gradedCount, pendingCount }: ClassOverviewProps)
 					<CardTitle className="text-sm font-medium">Quick Actions</CardTitle>
 				</CardHeader>
 				<CardContent className="space-y-2">
-					<Button variant="outline" size="sm" className="w-full justify-start" onClick={() => handleAction('Download Reports')}>
+					<Button variant="outline" size="sm" className="w-full justify-start" onClick={handleAction}>
 						<Download className="h-4 w-4 mr-2" />
 						Download Reports
 					</Button>
-					<Button variant="outline" size="sm" className="w-full justify-start" onClick={() => handleAction('View Syllabus')}>
+					<Button variant="outline" size="sm" className="w-full justify-start" onClick={handleAction}>
 						<BookOpen className="h-4 w-4 mr-2" />
 						View Syllabus
 					</Button>
-					<Button variant="outline" size="sm" className="w-full justify-start" onClick={() => handleAction('Settings')}>
+					<Button variant="outline" size="sm" className="w-full justify-start" onClick={handleAction}>
 						<Settings className="h-4 w-4 mr-2" />
 						Settings
 					</Button>

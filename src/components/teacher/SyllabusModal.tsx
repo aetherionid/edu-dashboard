@@ -80,7 +80,7 @@ export function SyllabusModal({ open, onOpenChange }: SyllabusModalProps) {
 							<BookOpen className="h-5 w-5 text-emerald-600" />
 						</div>
 						<div>
-							<DialogTitle className="text-xl">Course Syllabus</DialogTitle>
+							<DialogTitle className="text-lg">Course Syllabus</DialogTitle>
 							<DialogDescription>
 								Primary A - English Foundations • {completedCount}/{syllabusData.length} weeks completed
 							</DialogDescription>

@@ -35,15 +35,7 @@ export default function TeacherPage() {
 					api.teacher.getStudents()
 				]);
 
-				// Map class stats to classes list
-				// Handle both `id` and `class_id` depending on n8n response alias
-				// My n8n query: SELECT c.id as class_id, ... but I think api.ts uses .json() which returns array of objects
-				// Let's inspect the n8n query alias: SELECT c.id as class_id ...
-				// So the key in JSON will be `class_id`.
 
-				// Wait, the new n8n query I wrote: SELECT c.id as class_id ...
-				// But wait, the Update status response aliases might differ.
-				// Let's assume the keys match the SQL columns/aliases.
 
 				const validClasses = (Array.isArray(statsData) ? statsData : []).map((c: { class_id?: number; id?: number; class_name: string }) => ({
 					id: c.class_id || c.id || 0,
@@ -118,26 +110,31 @@ export default function TeacherPage() {
 				description="Grade students and send personalized AI reports to parents"
 			/>
 
-			<div className="max-w-7xl mx-auto px-8 py-6 space-y-6">
-				{/* Compact Header Bar */}
-				<ClassHeader
-					selectedClassId={selectedClassId}
-					onClassChange={setSelectedClassId}
-					onViewSyllabus={() => setSyllabusOpen(true)}
-					classes={classes}
-				/>
+			<div className="max-w-6xl mx-auto px-6 py-6">
+				{/* Header Section */}
+				<div className="mb-6">
+					<ClassHeader
+						selectedClassId={selectedClassId}
+						onClassChange={setSelectedClassId}
+						onViewSyllabus={() => setSyllabusOpen(true)}
+						classes={classes}
+					/>
+				</div>
 
-				{/* Stats Row */}
-				<StatsRow stats={stats} />
+				{/* Stats Section */}
+				<div className="mb-6">
+					<StatsRow stats={stats} />
+				</div>
 
-				{/* Student Roster - Full Width */}
-				<StudentRoster
-					students={students}
-					onGradingSuccess={handleGradingSuccess}
-				/>
+				{/* Main Content */}
+				<div className="space-y-6">
+					<StudentRoster
+						students={students}
+						onGradingSuccess={handleGradingSuccess}
+					/>
 
-				{/* Schedule Strip */}
-				<ScheduleStrip />
+					<ScheduleStrip />
+				</div>
 			</div>
 
 			{/* Syllabus Modal */}

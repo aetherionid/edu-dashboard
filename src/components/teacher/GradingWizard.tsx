@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
@@ -17,6 +17,8 @@ interface GradingWizardProps {
 	student: {
 		id: number;
 		student_name: string;
+		status: 'present' | 'absent';
+		parent_phone: string;
 	};
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
@@ -31,13 +33,10 @@ export function GradingWizard({ student, open, onOpenChange, onSuccess }: Gradin
 	const [topic, setTopic] = useState('');
 	const [syllabusTopics, setSyllabusTopics] = useState<{ week: number; topic: string }[]>([]);
 
+	// Reset state when modal opens/closes
 	useEffect(() => {
 		if (open) {
-			setState('input');
-			setScore(3);
-			setAttendance(true);
-			setDraftMessage('');
-
+			// Fetch syllabus when modal opens
 			const fetchSyllabus = async () => {
 				try {
 					const data = await api.teacher.getSyllabus();
@@ -54,17 +53,19 @@ export function GradingWizard({ student, open, onOpenChange, onSuccess }: Gradin
 				}
 			};
 			fetchSyllabus();
+		} else {
+			// Reset state when closing - use RAF to avoid setState in effect warning
+			requestAnimationFrame(() => {
+				setState('input');
+				setScore(3);
+				setAttendance(student.status === 'present');
+				setDraftMessage('');
+				setTopic('');
+			});
 		}
-	}, [open]);
+	}, [open, student.status]);
 
 	const scoreLabels = ['Needs Support', 'Developing', 'Proficient', 'Advanced', 'Exceptional'];
-	const scoreColors = [
-		'bg-red-50 hover:bg-red-100 border-red-200 text-red-900 dark:bg-red-950/50 dark:hover:bg-red-950 dark:border-red-800 dark:text-red-100',
-		'bg-orange-50 hover:bg-orange-100 border-orange-200 text-orange-900 dark:bg-orange-950/50 dark:hover:bg-orange-950 dark:border-orange-800 dark:text-orange-100',
-		'bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-900 dark:bg-blue-950/50 dark:hover:bg-blue-950 dark:border-blue-800 dark:text-blue-100',
-		'bg-emerald-50 hover:bg-emerald-100 border-emerald-200 text-emerald-900 dark:bg-emerald-950/50 dark:hover:bg-emerald-950 dark:border-emerald-800 dark:text-emerald-100',
-		'bg-purple-50 hover:bg-purple-100 border-purple-200 text-purple-900 dark:bg-purple-950/50 dark:hover:bg-purple-950 dark:border-purple-800 dark:text-purple-100',
-	];
 
 	const handleGenerateDraft = async () => {
 		if (!topic) {
@@ -102,7 +103,7 @@ export function GradingWizard({ student, open, onOpenChange, onSuccess }: Gradin
 		try {
 			await api.teacher.sendReport({
 				student_id: student.id,
-				parent_phone: '+6281234567890',
+				parent_phone: student.parent_phone,
 				topic,
 				score: score,
 				final_message: draftMessage,
@@ -128,83 +129,100 @@ export function GradingWizard({ student, open, onOpenChange, onSuccess }: Gradin
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-w-2xl">
-				<DialogHeader>
-					<DialogTitle className="text-xl">
+			<DialogContent className="max-w-lg">
+				<DialogHeader className="space-y-1.5">
+					<DialogTitle className="text-lg font-semibold">
 						Create Progress Report: {student.student_name}
 					</DialogTitle>
+					<DialogDescription className="text-sm">
+						{state === 'input' && 'Set attendance and performance score to generate feedback'}
+						{state === 'loading' && 'Generating personalized feedback...'}
+						{state === 'review' && 'Review and edit the message before sending'}
+						{state === 'success' && 'Report successfully delivered'}
+					</DialogDescription>
 				</DialogHeader>
 
 				{state === 'input' && (
-					<div className="space-y-6 py-4">
-						<div className="grid grid-cols-2 gap-4">
-							<div className="space-y-2">
-								<Label htmlFor="topic" className="text-sm font-medium">
-									Lesson Topic
-								</Label>
-								<Select value={topic} onValueChange={setTopic}>
-									<SelectTrigger id="topic">
-										<SelectValue placeholder="Select topic..." />
-									</SelectTrigger>
-									<SelectContent>
-										{syllabusTopics.map((item) => (
-											<SelectItem key={item.week} value={item.topic}>
-												Week {item.week}: {item.topic}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							</div>
+					<div className="space-y-5 py-2">
+						{/* Lesson Topic - Full Width */}
+						<div className="space-y-2">
+							<Label htmlFor="topic" className="text-sm font-medium">
+								Lesson Topic
+							</Label>
+							<Select value={topic} onValueChange={setTopic}>
+								<SelectTrigger
+									id="topic"
+									className="h-10 hover:bg-accent transition-colors cursor-pointer focus:ring-2 focus:ring-ring focus:ring-offset-2"
+								>
+									<SelectValue placeholder="Select..." />
+								</SelectTrigger>
+								<SelectContent>
+									{syllabusTopics.map((item) => (
+										<SelectItem
+											key={item.week}
+											value={item.topic}
+											className="text-sm cursor-pointer"
+										>
+											Week {item.week}: {item.topic}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
 
-							<div className="space-y-2">
-								<Label htmlFor="attendance" className="text-sm font-medium">
-									Attendance
-								</Label>
-								<div className="flex items-center h-10 px-3 bg-muted rounded-md">
-									<span className="text-sm mr-3">Present</span>
-									<Switch
-										id="attendance"
-										checked={attendance}
-										onCheckedChange={setAttendance}
-									/>
-								</div>
+						{/* Attendance - Full Width */}
+						<div className="space-y-2">
+							<Label className="text-sm font-medium">
+								Attendance
+							</Label>
+							<div className="flex items-center justify-between h-10 px-3 bg-muted rounded-md border">
+								<span className="text-sm font-medium">Present</span>
+								<Switch
+									checked={attendance}
+									onCheckedChange={setAttendance}
+								/>
 							</div>
 						</div>
 
-						<div className="space-y-3">
+						{/* Performance Level */}
+						<div className="space-y-2.5">
 							<Label className="text-sm font-medium">Performance Level</Label>
-							<div className="grid grid-cols-5 gap-2">
+							<div className="grid grid-cols-5 gap-2.5">
 								{[1, 2, 3, 4, 5].map((value) => (
 									<button
 										key={value}
+										type="button"
 										onClick={() => setScore(value)}
 										className={`
-											px-3 py-2.5 text-sm font-medium rounded-md border transition-colors
+											relative px-2 py-3 text-center rounded-lg border-2 transition-all cursor-pointer
 											${score === value
-												? scoreColors[value - 1] + ' ring-2 ring-offset-2 ring-offset-background ring-primary/20'
-												: 'bg-background hover:bg-muted border-border'
+												? 'bg-primary text-primary-foreground border-primary font-semibold shadow-md scale-105'
+												: 'bg-background hover:bg-accent hover:border-primary/30 border-border font-normal hover:scale-102'
 											}
 										`}
 									>
-										<div className="font-semibold mb-0.5">{value}</div>
-										<div className="text-xs opacity-80">{scoreLabels[value - 1]}</div>
+										<div className="text-lg font-bold leading-none mb-1.5">{value}</div>
+										<div className="text-[10px] leading-tight">{scoreLabels[value - 1]}</div>
 									</button>
 								))}
 							</div>
 							<p className="text-xs text-muted-foreground">
-								Select a performance level to generate appropriate feedback
+								Click a performance level to generate appropriate feedback
 							</p>
 						</div>
 
-						<div className="flex gap-2 pt-2">
+						{/* Actions */}
+						<div className="flex gap-3 pt-2">
 							<Button
+								type="button"
 								variant="outline"
 								onClick={() => onOpenChange(false)}
-								className="flex-1"
+								className="flex-1 hover:bg-accent"
 							>
 								Cancel
 							</Button>
 							<Button
+								type="button"
 								onClick={handleGenerateDraft}
 								className="flex-1"
 							>
@@ -216,14 +234,14 @@ export function GradingWizard({ student, open, onOpenChange, onSuccess }: Gradin
 				)}
 
 				{state === 'loading' && (
-					<div className="py-12 flex flex-col items-center justify-center">
-						<Loader2 className="h-10 w-10 animate-spin text-muted-foreground mb-4" />
+					<div className="py-16 flex flex-col items-center justify-center">
+						<Loader2 className="h-8 w-8 animate-spin text-muted-foreground mb-3" />
 						<p className="text-sm text-muted-foreground">Generating feedback...</p>
 					</div>
 				)}
 
 				{state === 'review' && (
-					<div className="space-y-4 py-4">
+					<div className="space-y-4 py-2">
 						<div className="space-y-2">
 							<div className="flex items-center justify-between">
 								<Label htmlFor="message" className="text-sm font-medium">
@@ -237,17 +255,20 @@ export function GradingWizard({ student, open, onOpenChange, onSuccess }: Gradin
 								id="message"
 								value={draftMessage}
 								onChange={(e) => setDraftMessage(e.target.value)}
-								rows={10}
-								className="resize-none font-sans"
+								rows={9}
+								className="resize-none text-sm leading-relaxed"
 							/>
-							<div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 p-3 rounded-md">
+							<div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 p-2.5 rounded-md border">
 								<AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-								<p>This message will be sent via WhatsApp to the parent. You can edit it before sending.</p>
+								<p className="leading-relaxed">
+									This message will be sent via WhatsApp. You can edit before sending.
+								</p>
 							</div>
 						</div>
 
-						<div className="flex gap-2">
+						<div className="flex gap-3">
 							<Button
+								type="button"
 								variant="outline"
 								onClick={() => setState('input')}
 								className="flex-1"
@@ -255,6 +276,7 @@ export function GradingWizard({ student, open, onOpenChange, onSuccess }: Gradin
 								Back
 							</Button>
 							<Button
+								type="button"
 								onClick={handleSendReport}
 								className="flex-1"
 							>
@@ -266,11 +288,11 @@ export function GradingWizard({ student, open, onOpenChange, onSuccess }: Gradin
 				)}
 
 				{state === 'success' && (
-					<div className="py-12 flex flex-col items-center justify-center">
-						<div className="h-16 w-16 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mb-4">
-							<CheckCircle2 className="h-8 w-8 text-emerald-600 dark:text-emerald-500" />
+					<div className="py-16 flex flex-col items-center justify-center">
+						<div className="h-12 w-12 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mb-3">
+							<CheckCircle2 className="h-6 w-6 text-emerald-600 dark:text-emerald-500" />
 						</div>
-						<p className="text-lg font-medium mb-1">Report Sent</p>
+						<p className="text-base font-medium mb-1">Report Sent</p>
 						<p className="text-sm text-muted-foreground">WhatsApp message delivered</p>
 					</div>
 				)}

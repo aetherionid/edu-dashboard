@@ -10,7 +10,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Bell, Moon, Search, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { toast } from 'sonner';
 
 interface DashboardHeaderProps {
 	title: string;
@@ -78,16 +77,6 @@ export function DashboardHeader({ title, description, action }: DashboardHeaderP
 										</div>
 									</DropdownMenuItem>
 								))}
-								<div className="px-3 py-2 border-t">
-									<Button
-										variant="ghost"
-										size="sm"
-										className="w-full text-xs h-8"
-										onClick={() => toast.info('Notifications center coming soon')}
-									>
-										View all
-									</Button>
-								</div>
 							</DropdownMenuContent>
 						</DropdownMenu>
 

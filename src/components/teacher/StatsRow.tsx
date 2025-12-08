@@ -52,8 +52,8 @@ export function StatsRow({ stats }: StatsRowProps) {
 							<stat.icon className={`h-5 w-5 ${stat.color}`} />
 						</div>
 						<div>
-							<p className="text-3xl font-bold tracking-tight">{stat.value}</p>
-							<p className="text-sm text-muted-foreground">{stat.label}</p>
+							<p className="text-3xl font-bold">{stat.value}</p>
+							<p className="text-sm text-muted-foreground font-medium">{stat.label}</p>
 						</div>
 					</div>
 				</Card>
