@@ -1,36 +1,149 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Aetherion Dashboard
 
-## Getting Started
+Internal dashboards for Sales and Teacher teams at Poly English.
 
-First, run the development server:
+## 🚀 Quick Start
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) - automatically redirects to `/sales`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📊 Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Sales Dashboard (`/sales`)
+- **Manual Lead Input**: Create leads manually via phone number input
+- **Metrics Grid**: 4 KPI cards (Total Leads, Action Required, Hot Pipeline, Valid Rate)
+- **Growth Graph**: Line chart showing lead growth trend (mocked data)
+- **Action Table**: List of Hot/Warm/Escalated leads with AI summaries
 
-## Learn More
+### Teacher Dashboard (`/teacher`)
+- **Class Header**: Class info and daily stats (Students, Graded, Pending)
+- **Student Roster**: List of students with grade buttons
+- **Grading Wizard**: 4-step dialog for grading students
+  - Step 1: Input (slider for score 1-5, attendance switch)
+  - Step 2: Loading (AI generating draft)
+  - Step 3: Review (editable textarea with AI draft)
+  - Step 4: Success (confirmation + auto-close)
 
-To learn more about Next.js, take a look at the following resources:
+## 🏗️ Architecture
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+Frontend (Next.js 14)
+    ↓ HTTP Requests
+n8n Webhooks (Backend API)
+    ↓ SQL Queries
+Supabase PostgreSQL
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🔌 API Integration
 
-## Deploy on Vercel
+Currently using **mock data** for demo. To connect to real n8n backend:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Create `.env.local`:
+```env
+NEXT_PUBLIC_N8N_BASE_URL=https://your-n8n-instance.com/webhook
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. Implement n8n workflows per `/docs/n8n_api_endpoints.md`
+
+3. Mock data will automatically be replaced with real API calls
+
+## 📁 Project Structure
+
+```
+dashboard/
+├── src/
+│   ├── app/
+│   │   ├── sales/page.tsx          # Sales dashboard page
+│   │   ├── teacher/page.tsx        # Teacher dashboard page
+│   │   └── layout.tsx              # Root layout with sidebar
+│   ├── components/
+│   │   ├── sales/
+│   │   │   ├── MetricsGrid.tsx     # 4 KPI cards
+│   │   │   ├── GrowthGraph.tsx     # Line chart
+│   │   │   ├── ManualLeadInput.tsx # Phone input form
+│   │   │   └── ActionTable.tsx     # Leads table
+│   │   ├── teacher/
+│   │   │   ├── ClassHeader.tsx     # Class stats header
+│   │   │   ├── StudentRoster.tsx   # Student list
+│   │   │   └── GradingWizard.tsx   # Multi-step grading dialog
+│   │   ├── layout/
+│   │   │   └── Sidebar.tsx         # Navigation sidebar
+│   │   └── ui/                     # Shadcn UI components
+│   └── lib/
+│       ├── api.ts                  # API client + mock data
+│       └── utils.ts                # Utility functions
+```
+
+## 🎨 Tech Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **UI Library**: Shadcn UI
+- **Styling**: TailwindCSS
+- **Charts**: Recharts
+- **Icons**: Lucide React
+- **Date Utils**: date-fns
+
+## 🔧 Development
+
+### Install dependencies
+```bash
+npm install
+```
+
+### Run dev server
+```bash
+npm run dev
+```
+
+### Build for production
+```bash
+npm run build
+npm start
+```
+
+## 📝 Next Steps
+
+1. **Create n8n workflows** (8 endpoints - see `/docs/n8n_api_endpoints.md`)
+2. **Set up Supabase tables** (run SQL scripts in `/sql/`)
+3. **Update environment variables** with real n8n webhook URL
+4. **Test end-to-end flow** with real data
+5. **Deploy** to production
+
+## 🎯 Demo Checklist
+
+- [ ] Set `NEXT_PUBLIC_N8N_BASE_URL` in `.env.local`
+- [ ] Create n8n workflows for all 8 API endpoints
+- [ ] Seed Supabase with demo data (students, syllabus templates)
+- [ ] Test manual lead creation → appears in table
+- [ ] Test grading flow → WhatsApp sent to parent
+- [ ] Prepare demo script
+
+## 📱 WhatsApp Integration
+
+Teacher grading sends WhatsApp via n8n workflow. For demo:
+- Parent phone must text "Hi" 24 hours before demo
+- n8n reuses WhatsApp node from LAT Mark III workflow
+
+## 🐛 Troubleshooting
+
+**Error: Cannot find module**
+```bash
+npm install
+```
+
+**Graph not showing**
+- Check console for Recharts errors
+- Ensure mock data format is correct
+
+**API calls failing**
+- Verify `NEXT_PUBLIC_N8N_BASE_URL` is set
+- Check n8n workflows are active
+- Test endpoints with curl first
+
+## 📄 License
+
+Internal tool for Poly English - Not for public distribution
