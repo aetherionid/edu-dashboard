@@ -5,14 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { toast } from 'sonner';
 
 export default function LoginPage() {
-	const router = useRouter();
+	const { login } = useAuth();
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [remember, setRemember] = useState(false);
@@ -30,16 +29,13 @@ export default function LoginPage() {
 
 		setIsLoading(true);
 
-		// Simulate authentication delay
-		await new Promise(resolve => setTimeout(resolve, 1000));
+		const success = await login(email, password);
 
-		// Demo credentials check
-		if (email === 'demo@aetherion.id' && password === 'demo123') {
-			router.push('/sales');
-		} else {
+		if (!success) {
 			setError('Invalid credentials. Try demo@aetherion.id / demo123');
 			setIsLoading(false);
 		}
+		// On success, AuthContext will handle redirect
 	};
 
 	return (

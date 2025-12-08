@@ -17,7 +17,7 @@ export function GrowthGraph() {
 	const data = trendData;
 
 	return (
-		<Card className="h-full">
+		<Card className="h-full overflow-hidden">
 			<CardHeader className="pb-2">
 				<div className="flex items-center justify-between">
 					<div className="flex items-center gap-3">
@@ -37,10 +37,10 @@ export function GrowthGraph() {
 			</CardHeader>
 
 			<CardContent className="pt-4">
-				<div className="h-[200px] w-full">
+				<div className="h-[200px] w-full overflow-hidden relative">
 					{mounted ? (
 						<ResponsiveContainer width="100%" height="100%">
-							<AreaChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
+							<AreaChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
 								<defs>
 									<linearGradient id="leadGradient" x1="0" y1="0" x2="0" y2="1">
 										<stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
@@ -59,6 +59,7 @@ export function GrowthGraph() {
 									tickLine={false}
 									tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
 									dx={-10}
+									width={40}
 								/>
 								<Tooltip
 									contentStyle={{
@@ -73,9 +74,11 @@ export function GrowthGraph() {
 								<Area
 									type="monotone"
 									dataKey="leads"
-									stroke="hsl(var(--primary))"
-									strokeWidth={2}
+									stroke="#10b981"
+									strokeWidth={3}
 									fill="url(#leadGradient)"
+									dot={{ fill: '#10b981', r: 4 }}
+									activeDot={{ r: 6 }}
 								/>
 							</AreaChart>
 						</ResponsiveContainer>

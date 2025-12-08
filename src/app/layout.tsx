@@ -1,6 +1,7 @@
 import { Sidebar } from '@/components/layout/Sidebar';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { Toaster } from '@/components/ui/sonner';
+import { AuthProvider } from '@/contexts/AuthContext';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -17,6 +18,20 @@ export const metadata: Metadata = {
   description: 'Sales & Teacher Internal Dashboard',
 };
 
+function LayoutContent({ children }: { children: React.ReactNode }) {
+  return (
+    <AuthProvider>
+      <div className="flex min-h-screen">
+        <Sidebar />
+        <main className="flex-1 overflow-auto relative z-0">
+          {children}
+        </main>
+      </div>
+      <Toaster richColors position="top-right" />
+    </AuthProvider>
+  );
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,13 +41,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={inter.variable}>
       <body className="font-sans antialiased">
         <ThemeProvider>
-          <div className="flex min-h-screen">
-            <Sidebar />
-            <main className="flex-1 overflow-auto">
-              {children}
-            </main>
-          </div>
-          <Toaster richColors position="top-right" />
+          <LayoutContent>{children}</LayoutContent>
         </ThemeProvider>
       </body>
     </html>
