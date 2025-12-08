@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
 	Select,
 	SelectContent,
@@ -11,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
-import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, MessageSquare, Users } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, MessageSquare, Search, Users, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { ChatTranscriptModal } from './ChatTranscriptModal';
 
@@ -42,14 +43,31 @@ export function LeadsTable({ leads, onStatusChange }: LeadsTableProps) {
 	const [expandedSummary, setExpandedSummary] = useState<number | null>(null);
 	const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 	const [currentPage, setCurrentPage] = useState(1);
+	const [searchQuery, setSearchQuery] = useState('');
+	const [statusFilter, setStatusFilter] = useState<'all' | 'Hot' | 'Warm' | 'Escalated'>('all');
 	const itemsPerPage = 10;
 
-	// Filter: Only show Hot, Warm, Escalated (hide Cold)
+	// Filter and search logic
 	const filteredLeads = useMemo(() => {
-		return leads.filter(lead =>
-			['Hot', 'Warm', 'Escalated'].includes(lead.lead_status)
-		);
-	}, [leads]);
+		let filtered = leads;
+
+		// Apply search filter
+		if (searchQuery) {
+			filtered = filtered.filter(lead =>
+				lead.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				lead.phone_number.includes(searchQuery)
+			);
+		}
+
+		// Apply status filter - always hide Cold, but allow filtering within Hot/Warm/Escalated
+		if (statusFilter === 'all') {
+			filtered = filtered.filter(lead => ['Hot', 'Warm', 'Escalated'].includes(lead.lead_status));
+		} else {
+			filtered = filtered.filter(lead => lead.lead_status === statusFilter);
+		}
+
+		return filtered;
+	}, [leads, searchQuery, statusFilter]);
 
 	// Sort by last_contacted
 	const sortedLeads = useMemo(() => {
@@ -102,7 +120,7 @@ export function LeadsTable({ leads, onStatusChange }: LeadsTableProps) {
 		<>
 			<Card className="overflow-hidden">
 				<CardHeader className="pb-4 border-b">
-					<div className="flex items-center justify-between">
+					<div className="flex items-center justify-between mb-4">
 						<div className="flex items-center gap-3">
 							<div className="p-2 rounded-xl bg-emerald-500/10">
 								<Users className="h-5 w-5 text-emerald-600" />
@@ -110,10 +128,56 @@ export function LeadsTable({ leads, onStatusChange }: LeadsTableProps) {
 							<div>
 								<CardTitle className="text-lg font-bold">Leads Pipeline</CardTitle>
 								<p className="text-sm text-muted-foreground">
-									{sortedLeads.length} active leads (Hot, Warm, Escalated)
+									{filteredLeads.length} active leads
 								</p>
 							</div>
 						</div>
+					</div>
+
+					{/* Search and Filter Controls */}
+					<div className="flex flex-col sm:flex-row gap-3">
+						{/* Search */}
+						<div className="relative flex-1">
+							<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+							<Input
+								placeholder="Search by name or phone..."
+								value={searchQuery}
+								onChange={(e) => setSearchQuery(e.target.value)}
+								className="pl-9 pr-9"
+							/>
+							{searchQuery && (
+								<button
+									onClick={() => setSearchQuery('')}
+									className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+								>
+									<X className="h-4 w-4" />
+								</button>
+							)}
+						</div>
+
+						{/* Status Filter */}
+						<Select value={statusFilter} onValueChange={(value: 'all' | 'Hot' | 'Warm' | 'Escalated') => setStatusFilter(value)}>
+							<SelectTrigger className="w-full sm:w-[150px]">
+								<SelectValue placeholder="Status" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="all">All Statuses</SelectItem>
+								<SelectItem value="Hot">🔥 Hot</SelectItem>
+								<SelectItem value="Warm">⚡ Warm</SelectItem>
+								<SelectItem value="Escalated">🚨 Escalated</SelectItem>
+							</SelectContent>
+						</Select>
+
+						{/* Sort Button */}
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={toggleSortDirection}
+							className="gap-2 w-full sm:w-auto"
+						>
+							{sortDirection === 'desc' ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+							{sortDirection === 'desc' ? 'Newest' : 'Oldest'}
+						</Button>
 					</div>
 				</CardHeader>
 

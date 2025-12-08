@@ -4,11 +4,13 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Student } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
-import { CheckCircle2, ChevronLeft, ChevronRight, Users } from 'lucide-react';
-import { useState } from 'react';
+import { CheckCircle2, ChevronLeft, ChevronRight, Search, Users, X } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { GradingWizard } from './GradingWizard';
 
 interface StudentRosterProps {
@@ -20,7 +22,10 @@ export function StudentRoster({ students, onGradingSuccess }: StudentRosterProps
 	const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
 	const [wizardOpen, setWizardOpen] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 5;
+	const [searchQuery, setSearchQuery] = useState('');
+	const [statusFilter, setStatusFilter] = useState<'all' | 'graded' | 'pending'>('all');
+	const [sortBy, setSortBy] = useState<'name' | 'recent'>('name');
+	const itemsPerPage = 8;
 
 	const handleGradeClick = (student: Student) => {
 		setSelectedStudent(student);
@@ -48,15 +53,46 @@ export function StudentRoster({ students, onGradingSuccess }: StudentRosterProps
 
 	const getAvatarColor = (id: number) => avatarColors[id % avatarColors.length];
 
+	// Filter, search, and sort logic
+	const filteredAndSortedStudents = useMemo(() => {
+		let filtered = students;
+
+		// Apply search filter
+		if (searchQuery) {
+			filtered = filtered.filter(student =>
+				student.student_name.toLowerCase().includes(searchQuery.toLowerCase())
+			);
+		}
+
+		// Apply status filter
+		if (statusFilter === 'graded') {
+			filtered = filtered.filter(s => s.graded_today);
+		} else if (statusFilter === 'pending') {
+			filtered = filtered.filter(s => !s.graded_today);
+		}
+
+		// Apply sorting
+		if (sortBy === 'name') {
+			filtered = [...filtered].sort((a, b) => a.student_name.localeCompare(b.student_name));
+		} else if (sortBy === 'recent') {
+			filtered = [...filtered].sort((a, b) => {
+				if (a.graded_today === b.graded_today) return 0;
+				return a.graded_today ? 1 : -1; // Pending first
+			});
+		}
+
+		return filtered;
+	}, [students, searchQuery, statusFilter, sortBy]);
+
 	// Pagination logic
-	const totalPages = Math.ceil(students.length / itemsPerPage);
+	const totalPages = Math.ceil(filteredAndSortedStudents.length / itemsPerPage);
 	const startIndex = (currentPage - 1) * itemsPerPage;
-	const paginatedStudents = students.slice(startIndex, startIndex + itemsPerPage);
+	const paginatedStudents = filteredAndSortedStudents.slice(startIndex, startIndex + itemsPerPage);
 
 	const gradedCount = students.filter(s => s.graded_today).length;
 	const pendingCount = students.length - gradedCount;
 
-	// Reset to page 1 if current page exceeds total (e.g., after class switch)
+	// Reset to page 1 if current page exceeds total (e.g., after filter change)
 	if (currentPage > totalPages && totalPages > 0) {
 		setCurrentPage(1);
 	}
@@ -65,7 +101,7 @@ export function StudentRoster({ students, onGradingSuccess }: StudentRosterProps
 		<>
 			<Card className="border shadow-sm">
 				<CardHeader className="pb-4">
-					<div className="flex items-center justify-between">
+					<div className="flex items-center justify-between mb-4">
 						<div className="flex items-center gap-3">
 							<CardTitle className="text-lg font-semibold">Student Roster</CardTitle>
 							<div className="flex items-center gap-2">
@@ -84,6 +120,51 @@ export function StudentRoster({ students, onGradingSuccess }: StudentRosterProps
 								Page {currentPage} of {totalPages}
 							</div>
 						)}
+					</div>
+
+					{/* Search, Filter, and Sort Controls */}
+					<div className="flex flex-col sm:flex-row gap-3">
+						{/* Search */}
+						<div className="relative flex-1">
+							<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+							<Input
+								placeholder="Search students..."
+								value={searchQuery}
+								onChange={(e) => setSearchQuery(e.target.value)}
+								className="pl-9 pr-9"
+							/>
+							{searchQuery && (
+								<button
+									onClick={() => setSearchQuery('')}
+									className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+								>
+									<X className="h-4 w-4" />
+								</button>
+							)}
+						</div>
+
+						{/* Filter by Status */}
+						<Select value={statusFilter} onValueChange={(value: 'all' | 'graded' | 'pending') => setStatusFilter(value)}>
+							<SelectTrigger className="w-full sm:w-[140px]">
+								<SelectValue placeholder="Filter" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="all">All Status</SelectItem>
+								<SelectItem value="pending">Pending</SelectItem>
+								<SelectItem value="graded">Graded</SelectItem>
+							</SelectContent>
+						</Select>
+
+						{/* Sort By */}
+						<Select value={sortBy} onValueChange={(value: 'name' | 'recent') => setSortBy(value)}>
+							<SelectTrigger className="w-full sm:w-[140px]">
+								<SelectValue placeholder="Sort" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="name">Name (A-Z)</SelectItem>
+								<SelectItem value="recent">Pending First</SelectItem>
+							</SelectContent>
+						</Select>
 					</div>
 				</CardHeader>
 
