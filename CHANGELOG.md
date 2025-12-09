@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/aetherionid/edu-dashboard/compare/v1.4.0...v1.5.0) (2025-12-09)
+
+
+### Features
+
+* enhance generate report ([84ce19c](https://github.com/aetherionid/edu-dashboard/commit/84ce19c82db561cb1dd65b5b9bcf9da848d294d5))
+
 ## [1.4.0](https://github.com/aetherionid/edu-dashboard/compare/v1.3.1...v1.4.0) (2025-12-09)
 
 
