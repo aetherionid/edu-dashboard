@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/aetherionid/edu-dashboard/compare/v1.3.1...v1.4.0) (2025-12-09)
+
+
+### Features
+
+* add create multiple leads ([54a07d5](https://github.com/aetherionid/edu-dashboard/commit/54a07d55d4826376f1c845a0d740d29a38d05727))
+
 ## [1.3.1](https://github.com/aetherionid/edu-dashboard/compare/v1.3.0...v1.3.1) (2025-12-08)
 
 
