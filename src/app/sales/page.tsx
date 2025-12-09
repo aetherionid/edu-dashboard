@@ -68,33 +68,25 @@ export default function SalesPage() {
 		fetchData();
 	}, []);
 
-	const handleLeadAdded = useCallback(async (newLead: { phone_number: string; full_name?: string }) => {
+	const handleLeadAdded = useCallback(async () => {
 		try {
-			const result = await api.sales.createLead(newLead);
+			// Refetch data to get the latest leads and metrics
+			const [metricsData, leadsData] = await Promise.all([
+				api.sales.getMetrics(),
+				api.sales.getLeads()
+			]);
 
-			// Optimistic UI update
-			const lead: Lead = {
-				id: result?.id || Date.now(),
-				full_name: newLead.full_name || `Lead ${newLead.phone_number.slice(-4)}`,
-				phone_number: newLead.phone_number,
-				lead_status: 'Hot',
-				last_contacted: new Date().toISOString(),
-				ai_summary: 'New lead - Awaiting initial AI qualification...',
-				chat_transcript: []
-			};
+			setMetrics({
+				total_leads: Number(metricsData?.total_leads) || 0,
+				action_required: Number(metricsData?.action_required) || 0,
+				hot_pipeline: Number(metricsData?.hot_pipeline) || 0,
+				valid_invalid_ratio: metricsData?.valid_rate || '0%'
+			});
 
-			setLeads(prev => [lead, ...prev]);
-			setMetrics(prev => ({
-				...prev,
-				total_leads: prev.total_leads + 1,
-				action_required: prev.action_required + 1,
-				hot_pipeline: prev.hot_pipeline + 1
-			}));
-			setAddModalOpen(false);
-			toast.success('Lead added successfully!');
+			setLeads(Array.isArray(leadsData) ? leadsData : []);
 		} catch (error) {
-			console.error('Failed to add lead:', error);
-			toast.error('Failed to add lead');
+			console.error('Failed to refresh data:', error);
+			toast.error('Failed to refresh dashboard');
 		}
 	}, []);
 

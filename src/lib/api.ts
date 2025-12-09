@@ -64,25 +64,35 @@ export const api = {
 			}
 		},
 
-		createLead: async (data: { phone_number: string; full_name?: string }) => {
-			const res = await fetch(`${API_BASE}/add-lead`, {
+		createLeads: async (leads: Array<{ phone_number: string; full_name?: string; remarks?: string }>) => {
+			// Get current date in YYYY-MM-DD format
+			const currentDate = new Date().toISOString().split('T')[0];
+
+			const res = await fetch(`${API_BASE}/add-leads`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
-					...data,
-					lead_source: 'Manual Dashboard Entry'
+					leads: leads.map(lead => ({
+						phone_number: lead.phone_number,
+						full_name: lead.full_name || '',
+						remarks: lead.remarks || '',
+						lead_status: 'New',
+						created_at: currentDate,
+						needs_reprocess: true,
+						lead_source: 'Manual Dashboard Entry'
+					}))
 				})
 			});
-			if (!res.ok) throw new Error('Failed to create lead');
+			if (!res.ok) throw new Error('Failed to create leads');
 
 			const text = await res.text();
 			if (!text) return null;
 
 			try {
 				const result = JSON.parse(text);
-				return Array.isArray(result) ? result[0] : result;
+				return Array.isArray(result) ? result : [result];
 			} catch (e) {
-				console.warn('Failed to parse create lead JSON:', e);
+				console.warn('Failed to parse create leads JSON:', e);
 				return null;
 			}
 		},
