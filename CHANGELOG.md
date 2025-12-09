@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/aetherionid/edu-dashboard/compare/v1.5.0...v1.6.0) (2025-12-09)
+
+
+### Features
+
+* add grade report ([54b6c39](https://github.com/aetherionid/edu-dashboard/commit/54b6c3956a26a18d52c8501daa2131ab23e84eec))
+
 ## [1.5.0](https://github.com/aetherionid/edu-dashboard/compare/v1.4.0...v1.5.0) (2025-12-09)
 
 
