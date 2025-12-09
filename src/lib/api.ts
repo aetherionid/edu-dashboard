@@ -172,6 +172,7 @@ export const api = {
 		},
 
 		generateDraft: async (data: {
+			student_id: number;
 			student_name: string;
 			topic: string;
 			score: number;

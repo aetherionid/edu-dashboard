@@ -88,6 +88,7 @@ export function GradingWizard({ student, open, onOpenChange, onSuccess }: Gradin
 			await new Promise(resolve => setTimeout(resolve, 1500));
 
 			const result = await api.teacher.generateDraft({
+				student_id: student.id,
 				student_name: student.student_name,
 				topic,
 				score: score,
