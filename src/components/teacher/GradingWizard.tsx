@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
@@ -19,6 +20,7 @@ interface GradingWizardProps {
 		student_name: string;
 		status: 'present' | 'absent';
 		parent_phone: string;
+		class_id?: number;
 	};
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
@@ -31,6 +33,8 @@ export function GradingWizard({ student, open, onOpenChange, onSuccess }: Gradin
 	const [attendance, setAttendance] = useState(true);
 	const [draftMessage, setDraftMessage] = useState('');
 	const [topic, setTopic] = useState('');
+	const [classActivity, setClassActivity] = useState('');
+	const [teacherNotes, setTeacherNotes] = useState('');
 	const [syllabusTopics, setSyllabusTopics] = useState<{ week: number; topic: string }[]>([]);
 
 	// Reset state when modal opens/closes
@@ -39,7 +43,7 @@ export function GradingWizard({ student, open, onOpenChange, onSuccess }: Gradin
 			// Fetch syllabus when modal opens
 			const fetchSyllabus = async () => {
 				try {
-					const data = await api.teacher.getSyllabus();
+					const data = await api.teacher.getSyllabus(student.class_id);
 					const topics = (Array.isArray(data) ? data : []).map((item: { week: number; topic: string }) => ({
 						week: item.week,
 						topic: item.topic
@@ -61,11 +65,17 @@ export function GradingWizard({ student, open, onOpenChange, onSuccess }: Gradin
 				setAttendance(student.status === 'present');
 				setDraftMessage('');
 				setTopic('');
+				setClassActivity('');
+				setTeacherNotes('');
 			});
 		}
 	}, [open, student.status]);
 
-	const scoreLabels = ['Needs Support', 'Developing', 'Proficient', 'Advanced', 'Exceptional'];
+	const scoreOptions = [
+		{ value: 1, label: 'Needs Help' },
+		{ value: 3, label: 'Good Progress' },
+		{ value: 5, label: 'Excellent' }
+	];
 
 	const handleGenerateDraft = async () => {
 		if (!topic) {
@@ -81,7 +91,9 @@ export function GradingWizard({ student, open, onOpenChange, onSuccess }: Gradin
 				student_name: student.student_name,
 				topic,
 				score: score,
-				attendance
+				attendance,
+				class_activity: classActivity,
+				teacher_notes: teacherNotes
 			});
 
 			let message = result.draft_message || '';
@@ -157,9 +169,9 @@ export function GradingWizard({ student, open, onOpenChange, onSuccess }: Gradin
 									<SelectValue placeholder="Select..." />
 								</SelectTrigger>
 								<SelectContent>
-									{syllabusTopics.map((item) => (
+									{syllabusTopics.map((item, index) => (
 										<SelectItem
-											key={item.week}
+											key={`${item.week}-${index}`}
 											value={item.topic}
 											className="text-sm cursor-pointer"
 										>
@@ -168,6 +180,35 @@ export function GradingWizard({ student, open, onOpenChange, onSuccess }: Gradin
 									))}
 								</SelectContent>
 							</Select>
+						</div>
+
+						{/* Class Activity */}
+						<div className="space-y-2">
+							<Label htmlFor="classActivity" className="text-sm font-medium">
+								Class Activity <span className="text-muted-foreground font-normal">(optional)</span>
+							</Label>
+							<Input
+								id="classActivity"
+								value={classActivity}
+								onChange={(e) => setClassActivity(e.target.value)}
+								placeholder="e.g. Flashcard memory game, Building a cardboard rocket"
+								className="h-10"
+							/>
+						</div>
+
+						{/* Teacher Notes */}
+						<div className="space-y-2">
+							<Label htmlFor="teacherNotes" className="text-sm font-medium">
+								Teacher Notes <span className="text-muted-foreground font-normal">(optional)</span>
+							</Label>
+							<Textarea
+								id="teacherNotes"
+								value={teacherNotes}
+								onChange={(e) => setTeacherNotes(e.target.value)}
+								placeholder="e.g. Forgot some planet names, used future tense correctly"
+								rows={2}
+								className="resize-none text-sm"
+							/>
 						</div>
 
 						{/* Attendance - Full Width */}
@@ -187,28 +228,25 @@ export function GradingWizard({ student, open, onOpenChange, onSuccess }: Gradin
 						{/* Performance Level */}
 						<div className="space-y-2.5">
 							<Label className="text-sm font-medium">Performance Level</Label>
-							<div className="grid grid-cols-5 gap-2.5">
-								{[1, 2, 3, 4, 5].map((value) => (
+							<div className="grid grid-cols-3 gap-3">
+								{scoreOptions.map((option) => (
 									<button
-										key={value}
+										key={option.value}
 										type="button"
-										onClick={() => setScore(value)}
+										onClick={() => setScore(option.value)}
 										className={`
-											relative px-2 py-3 text-center rounded-lg border-2 transition-all cursor-pointer
-											${score === value
+											relative px-3 py-3 text-center rounded-lg border-2 transition-all cursor-pointer
+											${score === option.value
 												? 'bg-primary text-primary-foreground border-primary font-semibold shadow-md scale-105'
 												: 'bg-background hover:bg-accent hover:border-primary/30 border-border font-normal hover:scale-102'
 											}
 										`}
 									>
-										<div className="text-lg font-bold leading-none mb-1.5">{value}</div>
-										<div className="text-[10px] leading-tight">{scoreLabels[value - 1]}</div>
+										<div className="text-lg font-bold leading-none mb-1">{option.value}</div>
+										<div className="text-xs leading-tight">{option.label}</div>
 									</button>
 								))}
 							</div>
-							<p className="text-xs text-muted-foreground">
-								Click a performance level to generate appropriate feedback
-							</p>
 						</div>
 
 						{/* Actions */}

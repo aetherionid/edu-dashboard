@@ -152,8 +152,11 @@ export const api = {
 			}
 		},
 
-		getSyllabus: async () => {
-			const res = await fetch(`${API_BASE}/syllabus`);
+		getSyllabus: async (classId?: number) => {
+			const url = classId
+				? `${API_BASE}/syllabus?class_id=${classId}`
+				: `${API_BASE}/syllabus`;
+			const res = await fetch(url);
 			if (!res.ok) throw new Error('Failed to fetch syllabus');
 
 			const text = await res.text();
@@ -173,6 +176,8 @@ export const api = {
 			topic: string;
 			score: number;
 			attendance: boolean;
+			class_activity?: string;
+			teacher_notes?: string;
 		}) => {
 			const res = await fetch(`${API_BASE}/generate-draft`, {
 				method: 'POST',
